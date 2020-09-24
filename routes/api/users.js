@@ -3,11 +3,12 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("config");
-
+const auth = require("../../middleware/auth");
 const { check, validationResult } = require("express-validator");
 
 // Importing User Model Schema
 const User = require("../../models/User");
+const { findById, findByIdAndUpdate } = require("../../models/User");
 
 // @route       POST /api/users
 // @desc        User Route
@@ -64,6 +65,44 @@ router.post(
           res.json({ token });
         }
       );
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Server Experienced Error!");
+    }
+  }
+);
+
+// @route     POST /api/users/updatepassword
+// @desc      Update password for user
+// @access    Private
+router.post(
+  "/updatepassword",
+  [
+    auth,
+    [
+      check("password")
+        .isLength({ min: 6 })
+        .withMessage("Please enter a password with 6 or more characters"),
+    ],
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { password } = req.body;
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    try {
+      const user = await User.findOneAndUpdate(
+        {
+          _id: req.user.id,
+        },
+        {
+          password: hashedPassword,
+        }
+      ).select("-password");
+      res.status(200).json(user);
     } catch (err) {
       console.error(err);
       res.status(500).send("Server Experienced Error!");
