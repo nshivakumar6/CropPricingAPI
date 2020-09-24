@@ -1,0 +1,4 @@
+{
+  "mongoURI": "mongodb+srv://combineharvester:F22yC8n1h10FqrkQNiD7V5@croppricing.dsydg.mongodb.net/CropPricing?retryWrites=true&w=majority",
+  "jwtSecret": "hCxs1U628GUDGaG57H04J8"
+}
