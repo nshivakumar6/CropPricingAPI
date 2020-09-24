@@ -7,7 +7,7 @@ const app = express();
 connectDB(); // from config/db
 app.use(express.json({ extended: false }));
 
-app.get("/", (req, res) => res.send("API Works!"));
+app.get("/", (req, res) => res.send("You've reached the Crop Pricing API!"));
 
 app.use("/api/cropprices", require("./routes/api/cropprices"));
 app.use("/api/users", require("./routes/api/users"));
