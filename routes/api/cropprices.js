@@ -8,7 +8,7 @@ const { post } = require("./users");
 // @route     GET /api/cropprices/product/all
 // @desc      GET ALL crop pricing listing
 // @access    Public (this will be the case for all until we have some form of auth)
-router.get('/product/all', async (req, res) => {
+router.get('/all', async (req, res) => {
   try {
     pool.query(
       'SELECT * FROM price',
