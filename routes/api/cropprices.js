@@ -2,16 +2,22 @@ const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
 const pool = require("../../config/db");
-const Pricing = require("../../models/Pricing");
-const { post } = require("./users");
 
 // @route     GET /api/cropprices/product/all
 // @desc      GET ALL crop pricing listing
 // @access    Public (this will be the case for all until we have some form of auth)
 router.get('/all', async (req, res) => {
+  const { limit } = req.body;
+  let query = 'SELECT * FROM price';
+  let queryArgs = [];
+  if (limit) {
+    query = query.concat(' limit ($1)');
+    queryArgs.push(limit)
+  }
   try {
     pool.query(
-      'SELECT * FROM price',
+      query,
+      queryArgs,
       (err, qres) => {
         if (err) {
           throw err;
