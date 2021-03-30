@@ -1,118 +1,186 @@
 const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
+const pool = require("../../config/db");
 const Pricing = require("../../models/Pricing");
 const { post } = require("./users");
 
-// @route      POST api/cropprices
-// @desc       Post / Update a Crop Price
-// @access     Public
-router.post(
-  "/",
-  [
-    check("code", "code required").exists(),
-    check("unit", "Unit required").exists(),
-    check("weight", "Weight required").exists(),
-    check("price", "Price required").exists(),
-    check("variety", "Variety required").exists(),
-    check("market", "Market required").exists(),
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const {
-      code,
-      unit,
-      weight,
-      price,
-      variety,
-      market,
-      average,
-      max,
-      min,
-      stdev,
-    } = req.body;
-
-    try {
-      let pricingListing = await Pricing.findOne({ code });
-      if (pricingListing) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "Listing already exists " }] });
+// @route     GET /api/cropprices/product/all
+// @desc      GET ALL crop pricing listing
+// @access    Public (this will be the case for all until we have some form of auth)
+router.get('/product/all', async (req, res) => {
+  try {
+    pool.query(
+      'SELECT * FROM price',
+      (err, qres) => {
+        if (err) {
+          throw err;
+        }
+        res.status(200).json(qres.rows);
       }
-
-      pricing = new Pricing({
-        code,
-        unit,
-        weight,
-        price,
-        variety,
-        market,
-      });
-
-      if (average) pricing.average = average;
-      if (max) pricing.max = max;
-      if (min) pricing.min = min;
-      if (stdev) pricing.stdev = stdev;
-
-      await pricing.save();
-
-      const payload = {
-        pricing: {
-          id: pricing.id,
-        },
-      };
-
-      res.json(pricing);
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("Server Error");
-    }
-  }
-);
-
-// @route       GET /api/cropprices/listing/:code
-// @desc        Get Crop Pricing Listing by Code
-// @access      Public
-router.get("/listing/:code", async (req, res) => {
-  try {
-    const listing = await Pricing.findOne({ code: req.params.code });
-
-    if (!listing) {
-      return res.status(400).json({ msg: "Listing not found" });
-    }
-
-    res.json(listing);
+    )
   } catch (err) {
     console.error(err.message);
-    if (err.name == "CastError") {
-      return res.status(400).json({ msg: "Listing not foundd" });
-    }
-    res.status(500).send("Server Error");
+    res.status(500).send('Server Error');
   }
-});
+})
 
-// @route       DELETE /api/cropprices/listing/:code
-// @desc        Delete Crop Pricing Listing by Code
-// @access      Public -- CHANGE TO PRIVATE AFTER CREATING ADMIN AUTH
-router.delete("/listing/:code", async (req, res) => {
+// @route     GET /api/cropprices/product
+// @desc      GET crop pricing listing by product, enter product name in request body as 'product'
+// @access    Public (this will be the case for all until we have some form of auth)
+router.get('/product', [
+  check('product', 'Product name required').not().isEmpty(),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({errors: errors.array()});
+  }
+  const { product } = req.body;
   try {
-    const listing = await Pricing.findOne({ code: req.params.code });
-    if (!listing) {
-      return res.status(404).json({ msg: "Price Listing Not Found" });
-    }
-    await listing.remove();
-    res.json({ msg: "Listing Removed" });
+    pool.query(
+      'SELECT * FROM price WHERE LOWER(product) like LOWER($1)',
+      ['%' + product + '%'],
+      (err, qres) => {
+        if (err) {
+          throw err;
+        }
+        res.status(200).json(qres.rows);
+      }
+    )
   } catch (err) {
     console.error(err.message);
-    if (err.name === "CastError") {
-      return res.status(400).json({ msg: "Listing Not Found" });
-    }
-    res.status(500).send("Server Error");
+    res.status(500).send('Server Error');
   }
-});
+})
+
+// @route     GET /api/cropprices/variety
+// @desc      GET crop pricing listing by variety, enter variety name in request body as 'variety'
+// @access    Public (this will be the case for all until we have some form of auth)
+router.get('/variety', [
+  check('variety', 'Product name required').not().isEmpty(),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({errors: errors.array()});
+  }
+  const { variety } = req.body;
+  try {
+    pool.query(
+      'SELECT * FROM price WHERE LOWER(variety) like LOWER($1)',
+      ['%' + variety + '%'],
+      (err, qres) => {
+        if (err) {
+          throw err;
+        }
+        res.status(200).json(qres.rows);
+      }
+    )
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+})
+
+// @route     GET /api/cropprices/category
+// @desc      GET crop pricing listing by category, enter category name in request body as 'category'
+// @access    Public (this will be the case for all until we have some form of auth)
+router.get('/category', [
+  check('category', 'Product name required').not().isEmpty(),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({errors: errors.array()});
+  }
+  const { category } = req.body;
+  try {
+    pool.query(
+      'SELECT * FROM price WHERE LOWER(category) like LOWER($1)',
+      ['%' + category + '%'],
+      (err, qres) => {
+        if (err) {
+          throw err;
+        }
+        res.status(200).json(qres.rows);
+      }
+    )
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+})
+
+// @route     GET /api/cropprices/market
+// @desc      GET crop pricing listing by market, enter market name in request body as 'market'
+// @access    Public (this will be the case for all until we have some form of auth)
+router.get('/market', [
+  check('market', 'Product name required').not().isEmpty(),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({errors: errors.array()});
+  }
+  const { market } = req.body;
+  try {
+    pool.query(
+      'SELECT * FROM price WHERE LOWER(market) like LOWER($1)',
+      ['%' + market + '%'],
+      (err, qres) => {
+        if (err) {
+          throw err;
+        }
+        res.status(200).json(qres.rows);
+      }
+    )
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+})
+
+// @route     GET /api/cropprices/
+// @desc      GET anything based on parameters in the request body
+//            (this is a bit experimental -- it seems to work though)
+//            (this needs to be tested further)
+//            (unsure about package.unit, package.weight, since these have a dot in them)
+// @access    Public (this will be the case for all until we have some form of auth)
+router.get('/', async (req, res) => {
+  const args = { category, variety, product, market} = req.body;
+  if (args && Object.keys(args).length === 0 && args.constructor === Object) {
+    
+    return res.status(400).json({errors: [{
+      "msg": "Category, variety, product, or market required",
+      "param": "any",
+      "location": "body"
+    }]});
+  }
+  let queryIndex = 1;
+  let query = 'SELECT * FROM price WHERE ';
+  let queryArgs = [];
+  for (key in args) {
+    if (queryIndex == 1) {
+      query = query.concat(`LOWER(${key}) like LOWER($${queryIndex})`);
+      queryArgs.push('%' + args[key] + '%');
+    } else {
+      query = query.concat(` AND LOWER(${key}) like LOWER($${queryIndex})`);
+      queryArgs.push('%' + args[key] + '%');
+    }
+    queryIndex++;
+  }
+  try {
+    pool.query(
+      query,
+      queryArgs,
+      (err, qres) => {
+        if (err) {
+          throw err;
+        }
+        res.status(200).json(qres.rows);
+      }
+    )
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+})
 
 module.exports = router;
