@@ -20,7 +20,111 @@ At the moment (after moving from MongoDB to PostgreSQL), there are six GET route
 ### GET ALL PRODUCTS
 > `/api/cropprices/all`
 
-Without any arguments
+Without any arguments, this route will GET ALL products. One can add the following in the request body to limit the number of results:
+
+```json
+{
+    "limit": 5
+}
+```
+Replace `5` with whatever number of results you wish.
+
+### GET by Product
+> `/api/cropprices/product
+
+This requires a request body like so:
+```json
+{
+    "product": "egg"
+}
+```
+Note: `"egg"` is *not* case sensitive. 
+
+You can also add a `"limit"` argument to the request body. This ***must*** be the **last** parameter in the request body.
+```json
+{
+    "product": "egg",
+    "limit": 2
+}
+```
+
+### GET by Variety
+> `/api/cropprices/variety
+
+This requires a request body like so:
+```json
+{
+    "variety": "ex"
+}
+```
+Note: `"egg"` is *not* case sensitive. 
+
+You can also add a `"limit"` argument to the request body. This ***must*** be the **last** parameter in the request body.
+```json
+{
+    "variety": "ex",
+    "limit": 2
+}
+```
+
+### GET by Category
+> `/api/cropprices/category
+
+This requires a request body like so:
+```json
+{
+    "category": "animal"
+}
+```
+Note: `"animal"` is *not* case sensitive. 
+
+You can also add a `"limit"` argument to the request body. This ***must*** be the **last** parameter in the request body.
+```json
+{
+    "category": "animal",
+    "limit": 2
+}
+```
+
+### GET by Market
+> `/api/cropprices/market
+
+This requires a request body like so:
+```json
+{
+    "market": "naku"
+}
+```
+Note: `"naku"` is *not* case sensitive. 
+
+You can also add a `"limit"` argument to the request body. This ***must*** be the **last** parameter in the request body.
+```json
+{
+    "market": "naku",
+    "limit": 2
+}
+```
+
+### GET by Market, Product, Variety, and/or Category
+> `/api/cropprices/
+
+This route can have a varying request body. The possible columns to search by are `"market", "category", "product", "variety"`. For example:
+
+```json
+{
+	"market": "naku",
+	"category": "animal"
+}
+```
+Will query by market and category. You can also add `"limit"` as a parameter with an argument. Please make this the ***LAST*** one in the request body.
+```json
+{
+	"market": "naku",
+	"category": "animal",
+	"limit": 2
+}
+```
+---
 
 ## Register, Login, and Authenticate Users
 Documentation & Implementation Coming Soon (?)

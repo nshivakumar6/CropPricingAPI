@@ -172,9 +172,11 @@ router.get('/market', [
 //            (this is a bit experimental -- it seems to work though)
 //            (this needs to be tested further)
 //            (unsure about package.unit, package.weight, since these have a dot in them)
+//            (also note that limit MUST be the last argument in the request body)
 // @access    Public (this will be the case for all until we have some form of auth)
 router.get('/', async (req, res) => {
   const args = { category, variety, product, market} = req.body;
+  const { limit } = req.body;
   if (args && Object.keys(args).length === 0 && args.constructor === Object) {
     
     return res.status(400).json({errors: [{
@@ -186,16 +188,23 @@ router.get('/', async (req, res) => {
   let queryIndex = 1;
   let query = 'SELECT * FROM price WHERE ';
   let queryArgs = [];
+  
   for (key in args) {
     if (queryIndex == 1) {
       query = query.concat(`LOWER(${key}) like LOWER($${queryIndex})`);
       queryArgs.push('%' + args[key] + '%');
-    } else {
+    } else if (key === 'limit') {
+      query = query.concat(` limit ($${queryIndex})`);
+      queryArgs.push(`${args[key]}`)
+    }
+    else {
       query = query.concat(` AND LOWER(${key}) like LOWER($${queryIndex})`);
       queryArgs.push('%' + args[key] + '%');
     }
     queryIndex++;
   }
+  console.log("Query", query);
+  console.log("args:", queryArgs);
   try {
     pool.query(
       query,
