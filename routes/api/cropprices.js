@@ -41,11 +41,17 @@ router.get('/product', [
   if (!errors.isEmpty()) {
     return res.status(400).json({errors: errors.array()});
   }
-  const { product } = req.body;
+  const { product, limit } = req.body;
+  let query = 'SELECT * FROM price WHERE LOWER(product) like LOWER($1)';
+  let queryArgs = ['%' + product + '%'];
+  if (limit) {
+    query = query.concat(' limit ($2)');
+    queryArgs.push(limit)
+  }
   try {
     pool.query(
-      'SELECT * FROM price WHERE LOWER(product) like LOWER($1)',
-      ['%' + product + '%'],
+      query,
+      queryArgs,
       (err, qres) => {
         if (err) {
           throw err;
@@ -63,17 +69,23 @@ router.get('/product', [
 // @desc      GET crop pricing listing by variety, enter variety name in request body as 'variety'
 // @access    Public (this will be the case for all until we have some form of auth)
 router.get('/variety', [
-  check('variety', 'Product name required').not().isEmpty(),
+  check('variety', 'Variety name required').not().isEmpty(),
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({errors: errors.array()});
   }
-  const { variety } = req.body;
+  const { variety, limit } = req.body;
+  let query = 'SELECT * FROM price WHERE LOWER(variety) like LOWER($1)';
+  let queryArgs = ['%' + variety + '%'];
+  if (limit) {
+    query = query.concat(' limit ($2)');
+    queryArgs.push(limit)
+  }
   try {
     pool.query(
-      'SELECT * FROM price WHERE LOWER(variety) like LOWER($1)',
-      ['%' + variety + '%'],
+      query,
+      queryArgs,
       (err, qres) => {
         if (err) {
           throw err;
@@ -91,17 +103,23 @@ router.get('/variety', [
 // @desc      GET crop pricing listing by category, enter category name in request body as 'category'
 // @access    Public (this will be the case for all until we have some form of auth)
 router.get('/category', [
-  check('category', 'Product name required').not().isEmpty(),
+  check('category', 'Category name required').not().isEmpty(),
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({errors: errors.array()});
   }
-  const { category } = req.body;
+  const { category, limit } = req.body;
+  let query = 'SELECT * FROM price WHERE LOWER(category) like LOWER($1)';
+  let queryArgs = ['%' + category + '%'];
+  if (limit) {
+    query = query.concat(' limit ($2)');
+    queryArgs.push(limit)
+  }
   try {
     pool.query(
-      'SELECT * FROM price WHERE LOWER(category) like LOWER($1)',
-      ['%' + category + '%'],
+      query,
+      queryArgs,
       (err, qres) => {
         if (err) {
           throw err;
@@ -119,17 +137,23 @@ router.get('/category', [
 // @desc      GET crop pricing listing by market, enter market name in request body as 'market'
 // @access    Public (this will be the case for all until we have some form of auth)
 router.get('/market', [
-  check('market', 'Product name required').not().isEmpty(),
+  check('market', 'Market name required').not().isEmpty(),
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({errors: errors.array()});
   }
-  const { market } = req.body;
+  const { market, limit } = req.body;
+  let query = 'SELECT * FROM price WHERE LOWER(market) like LOWER($1)';
+  let queryArgs = ['%' + market + '%'];
+  if (limit) {
+    query = query.concat(' limit ($2)');
+    queryArgs.push(limit)
+  }
   try {
     pool.query(
-      'SELECT * FROM price WHERE LOWER(market) like LOWER($1)',
-      ['%' + market + '%'],
+      query,
+      queryArgs,
       (err, qres) => {
         if (err) {
           throw err;
