@@ -30,7 +30,7 @@ Without any arguments, this route will GET ALL products. One can add the followi
 Replace `5` with whatever number of results you wish.
 
 ### GET by Product
-> `/api/cropprices/product
+> `/api/cropprices/product`
 
 This requires a request body like so:
 ```json
@@ -49,7 +49,7 @@ You can also add a `"limit"` argument to the request body. This ***must*** be th
 ```
 
 ### GET by Variety
-> `/api/cropprices/variety
+> `/api/cropprices/variety`
 
 This requires a request body like so:
 ```json
@@ -68,7 +68,7 @@ You can also add a `"limit"` argument to the request body. This ***must*** be th
 ```
 
 ### GET by Category
-> `/api/cropprices/category
+> `/api/cropprices/category`
 
 This requires a request body like so:
 ```json
@@ -87,7 +87,7 @@ You can also add a `"limit"` argument to the request body. This ***must*** be th
 ```
 
 ### GET by Market
-> `/api/cropprices/market
+> `/api/cropprices/market`
 
 This requires a request body like so:
 ```json
@@ -106,7 +106,7 @@ You can also add a `"limit"` argument to the request body. This ***must*** be th
 ```
 
 ### GET by Market, Product, Variety, and/or Category
-> `/api/cropprices/
+> `/api/cropprices/`
 
 This route can have a varying request body. The possible columns to search by are `"market", "category", "product", "variety"`. For example:
 
