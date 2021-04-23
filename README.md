@@ -10,6 +10,24 @@ provides a service account file in the form of a JSON file. Google requires a pa
 ```
 GOOGLE_APPLICATION_CREDENTIALS="./service-account-file.json"
 ```
+
+As indicated above, there must be a file `service-account-file.json` in the root directory of this project. This is the file you can acquire
+by following Google's Documentation [here](https://cloud.google.com/bigquery/docs/reference/libraries#linux-or-macos) under "Setting up Authentication".
+
+
+# Local API Testing
+If you need to test the API or make changes locally, one way to do it is by doing the following:
+
+- pull this git repo
+- get the `service-account-file.json` from our Super Secret shared drive
+- run `npm install` to get all the dependencies installed
+- make changes, test them by running `npm run server`
+
+When locally testing, please mind the hostname. If you're running the server on the same computer you're making requests from, you should be able to use `localhost` just fine. Otherwise use the local IP of the device you're running the server on.
+
+Ex: a GET request to `http://localhost:5000/api/cropprices/all`
+
+---
 ## Get Crop Pricing Listings
 At the moment (after moving from MongoDB to PostgreSQL), there are six GET routes defined.
 
